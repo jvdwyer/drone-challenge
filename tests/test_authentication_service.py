@@ -71,8 +71,8 @@ class TokenServiceTestCase(unittest.TestCase):
         # Check response and updated credentials
         self.assertEqual(change_response.status_code, 200)
         updated_auth = read_user_credentials()
-        self.assertEqual(updated_auth['username'], new_auth['new_username'])
-        self.assertEqual(updated_auth['password'], new_auth['new_password'])
+        self.assertEqual(updated_auth[0], new_auth['new_username'])
+        self.assertEqual(updated_auth[1], new_auth['new_password'])
     
     def test_change_credentials_unauthorized(self):
         # Incorrect initial credentials
@@ -87,8 +87,8 @@ class TokenServiceTestCase(unittest.TestCase):
         # Check response and ensure credentials remain unchanged
         self.assertEqual(change_response.status_code, 401)
         unchanged_auth = read_user_credentials()
-        self.assertEqual(unchanged_auth['username'], 'admin')
-        self.assertEqual(unchanged_auth['password'], 'initial')
+        self.assertEqual(unchanged_auth[0], 'admin')
+        self.assertEqual(unchanged_auth[1], 'initial')
 
 if __name__ == '__main__':
     unittest.main()

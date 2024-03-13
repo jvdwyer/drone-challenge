@@ -6,7 +6,7 @@ Services that provide authentication and next destination to a drone client deli
 
 ## Installation
 
-To use the services, you'll need to install the required Python packages. You can do this using 'pip3'. The the following command in your terminal:
+To use the services, you'll need to install the required Python packages. You can do this using 'pip'. Run the following command in your terminal:
 
 ```bash
 pip install -r requirements.txt
