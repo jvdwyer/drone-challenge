@@ -22,8 +22,18 @@ To start the Authentication service locally, run the following command:
 python run_services.py
 ```
 
-### Fleet Manager Service
-Coming shortly! This service will provide a client its next destination in GPS coordinates upon request.
+### Routing Service
+This service provides calling clients (pizza delivery drones) the next destination they should travel to. It uses geopy to translate address into GPS coordinates and calculate distance between locations. It also tracks how much range the drone has remaining. It runs on port 9092 by default.
+
+#### Routing Service Endpoints
+##### Get Destination
+* Endpoint: '/get_destination
+* Method: 'GET'
+* Description: Get next destination for drone
+* Example Request:
+```bash
+curl -X GET -H "Authorization: <token>" http://localhost:9092/get_destination
+```
 
 ### Authentication Service
 This service provides token based authentication allowing clients to obtain tokens and change their credentials securely. It runs on port 9091 by default.
@@ -42,7 +52,7 @@ Replace username and password with your desired credentials.
 ##### Validate Token:
 * Endpoint: '/validate_token'
 * Method: 'POST'
-* Description: validate the provided token.
+* Description: Validate the provided token.
 * Example Request:
 ```bash
 curl -X POST -H "Authorization: <token>" http://localhost:9091/validate_token
