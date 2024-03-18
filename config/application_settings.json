@@ -1,11 +1,1 @@
-{
-    "routing_service": {
-        "port": 9092,
-        "home_address": "1576 Halford Ave, Santa Clara, CA 95051"
-    },
-    "authentication_service": {
-        "port": 9091,
-        "username": "admin",
-        "password": "initial"
-    }
-}
+{"routing_service": {"port": 9092, "home_address": "1576 Halford Ave, Santa Clara, CA 95051"}, "authentication_service": {"port": 9091, "username": "admin", "password": "initial"}}

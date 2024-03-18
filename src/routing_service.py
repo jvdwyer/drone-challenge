@@ -9,9 +9,12 @@ import ssl
 
 app = Flask(__name__)
 
+# Constants
 CONFIG_FILE_PATH = 'config/application_settings.json'
 CSV_FILE_PATH = 'test.csv'
 DRONE_RANGE = 25
+
+# Global
 remaining_range = DRONE_RANGE
 
 # Reads CSV
@@ -60,9 +63,15 @@ def find_next_destination(current_location, orders):
         distance_to_order = geopy.distance.geodesic(current_location, order_location)
         if (distance_to_order <= remaining_range):
             return {'order_time': order['order_time'], 'address': order['address']}
-        else:
-            return {'order_time': None, 'address': 'Back to store'}
-    
+    return {'order_time': None, 'address': 'Back to store'}
+
+def calculate_distance(location1, location2):
+    return geopy.distance.geodesic(location1, location2)
+
+def calculate_priority(order):
+    return['order_time']
+
+# More global    
 HOME_ADDRESS = get_store_location()
 AUTH_SERVICE_URL = f'http://localhost:{get_service_port('authentication_service')}'
 
@@ -75,7 +84,7 @@ def get_destination():
         return jsonify({'error': 'Token is missing'}), 401
     
     auth_response = requests.post(
-        AUTH_SERVICE_URL + '/validate_token',
+        f'{AUTH_SERVICE_URL}/validate_token',
         headers = {'Authorization': token}
     )
 
@@ -87,22 +96,35 @@ def get_destination():
             current_location = tuple(map(float, current_location.split(',')))
         else:
             current_location = HOME_ADDRESS
-            
+        
+        distance_to_home = calculate_distance(current_location, HOME_ADDRESS)
+        
         orders = read_csv()
         
-        # TODO need to change input current address and add queuing logic
-        next_destination = find_next_destination(HOME_ADDRESS, orders)
+        # Sort orders by time
+        orders.sort(key=lambda x: calculate_priority(x))
         
-        if next_destination['address'] != 'Back to store':
+        # Create list of orders the drone can reach
+        reachable_orders = []
+        for order in orders:
+            order_location = get_coordinates(order['address'])
+            distance_to_order = calculate_distance(current_location, order_location)
+            if distance_to_order <= remaining_range + distance_to_home:
+                reachable_orders.append({'order_time': order['order_time'], 'address': order['address'], 'distance': distance_to_order})
+        
+        # Sort reachable orders by distance
+        reachable_orders.sort(key=lambda x: x['distance'])
+        
+        # Select closest reachable order or send drone home
+        if reachable_orders:
+            next_destination = reachable_orders[0]
             destination_coordinates = get_coordinates(next_destination['address'])
-            distance_to_next = geopy.distance.geodesic(current_location, destination_coordinates)
-            remaining_range -= distance_to_next.miles
-            
-        if next_destination['address'] == 'Back to store':
+            remaining_range -= next_destination['distance'].miles
+        else:
             destination_coordinates = get_coordinates(HOME_ADDRESS)
             remaining_range = DRONE_RANGE
-            
         return jsonify(destination_coordinates), 200
+
     else:
         return jsonify({auth_response.request.body}), auth_response.status_code
     

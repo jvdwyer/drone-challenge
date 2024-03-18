@@ -2,7 +2,7 @@ import unittest
 from base64 import b64encode
 from flask import Flask
 from flask.testing import FlaskClient
-from src.authentication_service import app, read_user_credentials, write_user_credentials, validate_user_credentials
+from src.authentication_service import app, read_user_credentials, write_user_credentials
 
 class TokenServiceTestCase(unittest.TestCase):
     def setUp(self):

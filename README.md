@@ -17,13 +17,13 @@ This will install the necessary dependencies for the services.
 ## Usage
 
 ### Run the Service
-To start the Authentication service locally, run the following command:
+To start the services locally, run the following command:
 ```bash
 python run_services.py
 ```
 
 ### Routing Service
-This service provides calling clients (pizza delivery drones) the next destination they should travel to. It uses geopy to translate address into GPS coordinates and calculate distance between locations. It also tracks how much range the drone has remaining. It runs on port 9092 by default.
+This service provides calling clients (pizza delivery drones) the next destination they should travel to. A simple heuristic algorithm looking at orders within battery range (including return home trip) and order time is implemented to determine the next location. It uses geopy to translate address into GPS coordinates and calculate distance between locations. It also tracks how much range the drone has remaining. It runs on port 9092 by default.
 
 #### Routing Service Endpoints
 ##### Get Destination
